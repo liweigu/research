@@ -11,6 +11,11 @@ import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 
 import research.core.data.DataFrame;
+import research.core.vo.Item;
+import research.core.vo.Label;
+import research.core.vo.Rating;
+import research.core.vo.User;
+import research.model.tool.EvaluateTool;
 
 /**
  * 用户物品推荐
@@ -18,7 +23,29 @@ import research.core.data.DataFrame;
  * @author liweigu714@163.com
  *
  */
-public class UserItemRecommend extends RecommendModel {
+public class UserItemRecommendModel extends RecommendModel {
+	/**
+	 * 训练
+	 * 
+	 * @param ratings 评分列表
+	 */
+	public void fit(List<Rating> ratings) {
+		List<List<Double>> features = new ArrayList<List<Double>>();
+		List<List<Double>> labels = new ArrayList<List<Double>>();
+		for (Rating rating : ratings) {
+			User user = rating.getUser();
+			Item item = rating.getItem();
+			Label label = rating.getLabel();
+
+			List<Double> feature = new ArrayList<Double>();
+			feature.addAll(user.doubleValue());
+			feature.addAll(item.doubleValue());
+//			System.out.println(feature.size());
+			features.add(feature);
+			labels.add(label.doubleValue());
+		}
+		this.fit(features, labels);
+	}
 
 	@Override
 	public void fit(List<List<Double>> features, List<List<Double>> labels) {
@@ -32,7 +59,7 @@ public class UserItemRecommend extends RecommendModel {
 		DataSet dataSet = null;
 		Map<String, Object> initProps = this.getInitProps();
 		if (initProps != null) {
-			int inputSize = Integer.parseInt((String) initProps.get("inputSize"));
+			int inputSize = (int) initProps.get("inputSize");
 			int outputSize = 1;
 			int batchSize = features.size();
 			double[] featuresData = new double[inputSize * batchSize];
@@ -81,9 +108,27 @@ public class UserItemRecommend extends RecommendModel {
 		return result;
 	}
 
+	public void evaluate(List<Rating> ratings) {
+		List<List<Double>> features = new ArrayList<List<Double>>();
+		List<List<Double>> labels = new ArrayList<List<Double>>();
+		for (Rating rating : ratings) {
+			User user = rating.getUser();
+			Item item = rating.getItem();
+			Label label = rating.getLabel();
+
+			List<Double> feature = new ArrayList<Double>();
+			feature.addAll(user.doubleValue());
+			feature.addAll(item.doubleValue());
+			features.add(feature);
+			labels.add(label.doubleValue());
+		}
+		this.evaluate(features, labels);
+	}
+
 	@Override
 	public void evaluate(List<List<Double>> features, List<List<Double>> labels) {
-
+		List<List<Double>> predictedResults = this.output(features);
+		EvaluateTool.eval(predictedResults, labels);
 	}
 
 }

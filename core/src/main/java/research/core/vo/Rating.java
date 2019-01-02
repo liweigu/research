@@ -2,11 +2,23 @@ package research.core.vo;
 
 import java.util.List;
 
-public class Record extends BaseVo {
+/**
+ * ÆÀ·Ö
+ * 
+ * @author liweigu714@163.com
+ *
+ */
+public class Rating extends BaseVo {
 	private static final long serialVersionUID = -8994083765802855424L;
 	private User user;
 	private Item item;
-	private Record record;
+	private Label label;
+
+	public Rating(User user, Item item, Label label) {
+		this.user = user;
+		this.item = item;
+		this.label = label;
+	}
 
 	public User getUser() {
 		return user;
@@ -24,12 +36,12 @@ public class Record extends BaseVo {
 		this.item = item;
 	}
 
-	public Record getRecord() {
-		return record;
+	public Label getLabel() {
+		return label;
 	}
 
-	public void setRecord(Record record) {
-		this.record = record;
+	public void setLabel(Label label) {
+		this.label = label;
 	}
 
 	@Override
@@ -37,4 +49,5 @@ public class Record extends BaseVo {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 }

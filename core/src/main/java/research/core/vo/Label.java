@@ -2,13 +2,24 @@ package research.core.vo;
 
 import java.util.List;
 
+/**
+ * ±Í«©
+ * 
+ * @author liweigu714@163.com
+ *
+ */
 public class Label extends BaseVo {
 	private static final long serialVersionUID = -683249698941076369L;
 
+	private List<Double> values;
+
+	public Label(List<Double> values) {
+		this.values = values;
+	}
+
 	@Override
 	public List<Double> doubleValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return values;
 	}
 
 }

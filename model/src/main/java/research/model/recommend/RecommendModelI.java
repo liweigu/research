@@ -4,6 +4,12 @@ import java.util.List;
 
 import research.core.data.DataFrame;
 
+/**
+ * 推荐模型接口
+ * 
+ * @author liweigu714@163.com
+ *
+ */
 public interface RecommendModelI {
 	/**
 	 * 训练

@@ -2,13 +2,24 @@ package research.core.vo;
 
 import java.util.List;
 
+/**
+ * ”√ªß
+ * 
+ * @author liweigu714@163.com
+ *
+ */
 public class User extends BaseVo {
 	private static final long serialVersionUID = -7635233846566806646L;
 
+	private List<Double> values;
+
+	public User(List<Double> values) {
+		this.values = values;
+	}
+
 	@Override
 	public List<Double> doubleValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return values;
 	}
 
 }
