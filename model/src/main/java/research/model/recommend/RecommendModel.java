@@ -24,7 +24,7 @@ import org.nd4j.linalg.schedule.MapSchedule;
 import org.nd4j.linalg.schedule.ScheduleType;
 
 /**
- * 推荐模型基类
+ * 鎺ㄨ崘妯″瀷
  * 
  * @author liweigu714@163.com
  *
@@ -35,7 +35,7 @@ public abstract class RecommendModel implements RecommendModelI {
 
 	public Object getModel() {
 		if (ComputationGraph == null) {
-			throw new IllegalStateException("模型未初始化");
+			throw new IllegalStateException("妯″瀷鏈垵濮嬪寲");
 		}
 		return ComputationGraph;
 	}
@@ -50,7 +50,7 @@ public abstract class RecommendModel implements RecommendModelI {
 			if (initProps != null && initProps.containsKey("inputSize")) {
 				inputSize = (int) initProps.get("inputSize");
 			} else {
-				throw new IllegalArgumentException("初始化参数需要设置inputSize");
+				throw new IllegalArgumentException("initProps缂哄皯灞炴�э細inputSize");
 			}
 			InitProps = initProps;
 			int outputSize = 1;

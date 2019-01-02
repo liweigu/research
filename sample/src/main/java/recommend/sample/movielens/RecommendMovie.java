@@ -9,7 +9,7 @@ import research.data.reader.UserItemReader;
 import research.model.recommend.UserItemRecommendModel;
 
 /**
- * µçÓ°ÍÆ¼ö
+ * ç”µå½±æ¨è
  * 
  * @author liweigu714@163.com
  *
@@ -18,37 +18,37 @@ public class RecommendMovie {
 	public static String BasePath = "E:/data/ai/librec/movielens/ml-1m/";
 
 	public static void main(String[] args) {
-		// Êı¾İ
-		// TODO: ÔİÊ±ÑµÁ·¼¯/ÑéÖ¤¼¯/²âÊÔ¼¯ÊÇÔ¤ÏÈ»®·ÖºÃµÄÎÄ¼ş£¬ºóĞø¼ÓÉÏ·Ö¸îÆ÷ºóÖ§³Ö¶¯Ì¬»®·ÖÊı¾İ¡£
+		// æ•°æ®
+		// TODO: æš‚æ—¶é¢„å…ˆåˆ’åˆ†äº†è®­ç»ƒé›†/éªŒè¯é›†/æµ‹è¯•é›†ï¼Œå®ç°æ•°æ®åˆ†å‰²å™¨åå†æ”¯æŒåŠ¨æ€åˆ†ç»„ã€‚
 		String userDataPath = BasePath + "users.dat";
 		String itemDataPath = BasePath + "movies.dat";
 		String trainDataPath = BasePath + "ratings_train.dat";
 		String validDataPath = BasePath + "ratings_valid.dat";
 		String testDataPath = BasePath + "ratings_test.dat";
 
-		// ÑµÁ·Ä£ĞÍ
+		// è®­ç»ƒ
 		UserItemRecommendModel userItemRecommendModel = new UserItemRecommendModel();
 		Map<String, Object> initProps = new HashMap<String, Object>();
 		initProps.put("inputSize", 23);
 		userItemRecommendModel.initModel(initProps);
 
-		int epoch = 100; // 2500
+		int epoch = 50; // 100, 2500
 		int batchSize = 32;
 		for (int i = 0; i < epoch; i++) {
-			if (i % 100 == 0) {
+			if (i % 10 == 0) {
 				System.out.println("i = " + i);
 			}
 			int start = batchSize * i;
-			// ÅúÁ¿¶ÁÈ¡Êı¾İ
+			// åˆ†æ‰¹è¯»å–è®­ç»ƒæ•°æ®
 			List<Rating> ratings = UserItemReader.readRatings(userDataPath, itemDataPath, trainDataPath, start,
 					batchSize);
 			userItemRecommendModel.fit(ratings);
 		}
 
-		// Ô¤²âÆÀ¹À½á¹û
-		// ¶ÁÈ¡È«²¿Êı¾İ
+		// éªŒè¯ä¸è¯„ä¼°
+		// è¯»å–å…¨éƒ¨éªŒè¯æ•°æ®
 		List<Rating> validRatings = UserItemReader.readRatings(userDataPath, itemDataPath, validDataPath, 0, -1);
-		// ÆÀ¹À
+		// ç»“æœè¯„ä¼°
 		userItemRecommendModel.evaluate(validRatings);
 	}
 

@@ -3,7 +3,7 @@ package research.core.vo;
 import java.util.List;
 
 /**
- * ±êÇ©
+ * æ ‡ç­¾
  * 
  * @author liweigu714@163.com
  *

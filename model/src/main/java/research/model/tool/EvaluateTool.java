@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ½á¹ûÆÀ¹À¹¤¾ß
+ * ç»“æžœè¯„ä¼°å·¥å…·
  * 
  * @author liweigu714@163.com
  *
  */
 public class EvaluateTool {
 
-	// TODO: ·µ»Ø½á¹û¶ÔÏó
+	// TODO: è¿”å›žå¯¹è±¡åž‹ç»“æžœ
 	public static void eval(List<List<Double>> predictedResults, List<List<Double>> labels) {
 		List<Double> predictedValues = new ArrayList<Double>();
 		for (List<Double> predictedResult : predictedResults) {
@@ -31,7 +31,7 @@ public class EvaluateTool {
 			double predictedValue = predictedValues.get(i);
 			double labelValue = labelValues.get(i);
 
-			// ·´¹éÒ»»¯
+			// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½
 			predictedValue *= 5;
 			labelValue *= 5;
 

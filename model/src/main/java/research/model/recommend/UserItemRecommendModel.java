@@ -18,16 +18,16 @@ import research.core.vo.User;
 import research.model.tool.EvaluateTool;
 
 /**
- * 用户物品推荐
+ * 鐢ㄦ埛鐗╁搧鎺ㄨ崘妯″瀷
  * 
  * @author liweigu714@163.com
  *
  */
 public class UserItemRecommendModel extends RecommendModel {
 	/**
-	 * 训练
+	 * 璁粌
 	 * 
-	 * @param ratings 评分列表
+	 * @param ratings 璇勫垎鍒楄〃
 	 */
 	public void fit(List<Rating> ratings) {
 		List<List<Double>> features = new ArrayList<List<Double>>();

@@ -5,29 +5,29 @@ import java.util.List;
 import research.core.data.DataFrame;
 
 /**
- * 推荐模型接口
+ * 鎺ㄨ崘妯″瀷鎺ュ彛
  * 
  * @author liweigu714@163.com
  *
  */
 public interface RecommendModelI {
 	/**
-	 * 训练
+	 * 璁粌
 	 */
 	void fit(List<List<Double>> features, List<List<Double>> labels);
 
 	/**
-	 * 训练
+	 * 璁粌
 	 */
 	void fit(DataFrame dataFrame);
 
 	/**
-	 * 预测结果
+	 * 棰勬祴
 	 */
 	List<List<Double>> output(List<List<Double>> features);
 
 	/**
-	 * 评估结果
+	 * 缁撴灉璇勪及
 	 */
 	void evaluate(List<List<Double>> features, List<List<Double>> labels);
 }
