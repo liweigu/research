@@ -15,16 +15,19 @@ import research.model.recommend.UserItemRecommendModel;
  *
  */
 public class RecommendMovie {
-	public static String BasePath = "E:/data/ai/librec/movielens/ml-1m/";
-
 	public static void main(String[] args) {
+		String basePath = "E:/data/ai/librec/movielens/ml-1m/";
+		run(basePath);
+	}
+
+	public static void run(String basePath) {
 		// 数据
 		// TODO: 暂时预先划分了训练集/验证集/测试集，实现数据分割器后再支持动态分组。
-		String userDataPath = BasePath + "users.dat";
-		String itemDataPath = BasePath + "movies.dat";
-		String trainDataPath = BasePath + "ratings_train.dat";
-		String validDataPath = BasePath + "ratings_valid.dat";
-		String testDataPath = BasePath + "ratings_test.dat";
+		String userDataPath = basePath + "users.dat";
+		String itemDataPath = basePath + "movies.dat";
+		String trainDataPath = basePath + "ratings_train.dat";
+		String validDataPath = basePath + "ratings_valid.dat";
+		String testDataPath = basePath + "ratings_test.dat";
 
 		// 训练
 		UserItemRecommendModel userItemRecommendModel = new UserItemRecommendModel();
