@@ -2,11 +2,18 @@ package research.model.recommend;
 
 import java.util.List;
 
+import research.core.data.DataFrame;
+
 public interface RecommendModelI {
 	/**
 	 * ÑµÁ·
 	 */
 	void fit(List<List<Double>> features, List<List<Double>> labels);
+
+	/**
+	 * ÑµÁ·
+	 */
+	void fit(DataFrame dataFrame);
 
 	/**
 	 * Ô¤²â½á¹û
