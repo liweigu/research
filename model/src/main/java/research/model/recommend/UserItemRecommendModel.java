@@ -79,10 +79,10 @@ public class UserItemRecommendModel extends RecommendModel {
 			builder.updater(new Adam(mapSchedule));
 
 			GraphBuilder graphBuilder = builder.graphBuilder().backpropType(BackpropType.Standard).addInputs("input").setOutputs("output");
-			graphBuilder = graphBuilder.addLayer("dense1", new DenseLayer.Builder().nIn(inputSize).nOut(20).updater(new Adam(mapSchedule))
+			graphBuilder = graphBuilder.addLayer("dense1", new DenseLayer.Builder().nIn(inputSize).nOut(100).updater(new Adam(mapSchedule))
 					.weightInit(WeightInit.RELU).activation(Activation.RELU).build(), "input");
 			graphBuilder = graphBuilder.addLayer("dense2",
-					new DenseLayer.Builder().nIn(20).nOut(10).updater(new Adam(mapSchedule)).weightInit(WeightInit.RELU).activation(Activation.RELU).build(),
+					new DenseLayer.Builder().nIn(100).nOut(10).updater(new Adam(mapSchedule)).weightInit(WeightInit.RELU).activation(Activation.RELU).build(),
 					"dense1");
 			graphBuilder = graphBuilder.addLayer("output", new OutputLayer.Builder(LossFunction.MSE).nIn(10).nOut(outputSize).updater(new Adam(mapSchedule))
 					.weightInit(WeightInit.XAVIER).activation(Activation.IDENTITY).build(), "dense2");

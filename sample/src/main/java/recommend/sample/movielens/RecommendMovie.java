@@ -35,10 +35,10 @@ public class RecommendMovie {
 		initProps.put("inputSize", 23);
 		userItemRecommendModel.initModel(initProps);
 
-		int epoch = 2500; // 100, 2500
+		int epoch = 5000; // 2500, 5000, 10000
 		int batchSize = 32;
 		for (int i = 0; i < epoch; i++) {
-			if (i % 10 == 0) {
+			if (i % 100 == 0) {
 				System.out.println("i = " + i);
 			}
 			int start = batchSize * i;
