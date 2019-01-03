@@ -35,7 +35,7 @@ public class RecommendMovie {
 		initProps.put("inputSize", 23);
 		userItemRecommendModel.initModel(initProps);
 
-		int epoch = 50; // 100, 2500
+		int epoch = 2500; // 100, 2500
 		int batchSize = 32;
 		for (int i = 0; i < epoch; i++) {
 			if (i % 10 == 0) {
@@ -50,7 +50,10 @@ public class RecommendMovie {
 
 		// 验证与评估
 		// 读取全部验证数据
-		List<Rating> validRatings = UserItemReader.readRatings(userDataPath, itemDataPath, validDataPath, 0, -1);
+		System.out.println("evaluating...");
+		int evalCount = 100;
+		List<Rating> validRatings = UserItemReader.readRatings(userDataPath, itemDataPath, validDataPath, 0, evalCount);
+		System.out.println("validRatings.size() = " + validRatings.size());
 		// 结果评估
 		userItemRecommendModel.evaluate(validRatings);
 	}

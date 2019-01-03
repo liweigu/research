@@ -1,4 +1,4 @@
-package research.model.tool;
+package research.model.eval;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 public class EvaluateTool {
 
 	// TODO: 返回对象型结果
-	public static void eval(List<List<Double>> predictedResults, List<List<Double>> labels) {
+	public static void evalF1(List<List<Double>> predictedResults, List<List<Double>> labels) {
 		List<Double> predictedValues = new ArrayList<Double>();
 		for (List<Double> predictedResult : predictedResults) {
 			predictedValues.add(predictedResult.get(0));
@@ -31,9 +31,7 @@ public class EvaluateTool {
 			double predictedValue = predictedValues.get(i);
 			double labelValue = labelValues.get(i);
 
-			// ����һ��
-			predictedValue *= 5;
-			labelValue *= 5;
+			// TODO: 反归一化
 
 			boolean positive = Math.abs(predictedValue - labelValue) < 0.5;
 			boolean isTrue = labelValue == 1;

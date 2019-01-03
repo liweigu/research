@@ -2,20 +2,39 @@ package research.model.recommend;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deeplearning4j.api.storage.StatsStorage;
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
+import org.deeplearning4j.nn.conf.BackpropType;
+import org.deeplearning4j.nn.conf.ComputationGraphConfiguration.GraphBuilder;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.layers.DenseLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.graph.ComputationGraph;
+import org.deeplearning4j.nn.weights.WeightInit;
+import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
+import org.deeplearning4j.ui.api.UIServer;
+import org.deeplearning4j.ui.stats.StatsListener;
+import org.deeplearning4j.ui.storage.InMemoryStatsStorage;
+import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
+import org.nd4j.linalg.learning.config.Adam;
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
+import org.nd4j.linalg.schedule.ISchedule;
+import org.nd4j.linalg.schedule.MapSchedule;
+import org.nd4j.linalg.schedule.ScheduleType;
 
 import research.core.data.DataFrame;
 import research.core.vo.Item;
 import research.core.vo.Label;
 import research.core.vo.Rating;
 import research.core.vo.User;
-import research.model.tool.EvaluateTool;
+import research.model.eval.RatingEvaluator;
 
 /**
  * 用户物品推荐模型
@@ -24,6 +43,63 @@ import research.model.tool.EvaluateTool;
  *
  */
 public class UserItemRecommendModel extends RecommendModel {
+
+	public void initModel(Map<String, Object> initProps) {
+		if (ComputationGraph == null) {
+			int inputSize;
+			if (initProps != null && initProps.containsKey("inputSize")) {
+				inputSize = (int) initProps.get("inputSize");
+			} else {
+				throw new IllegalArgumentException("initProps缺少属性：inputSize");
+			}
+			InitProps = initProps;
+			int outputSize = 1;
+
+			double learningRate = 1e-4;
+			System.out.println("learningRate = " + learningRate);
+			Map<Integer, Double> lrSchedule = new HashMap<Integer, Double>();
+			lrSchedule.put(0, learningRate);
+			lrSchedule.put(1000, 0.8 * learningRate);
+			lrSchedule.put(5000, 0.5 * learningRate);
+			lrSchedule.put(10000, 0.2 * learningRate);
+			lrSchedule.put(15000, 0.1 * learningRate);
+			System.out.println("lrSchedule = " + lrSchedule);
+			ISchedule mapSchedule = new MapSchedule(ScheduleType.ITERATION, lrSchedule);
+
+			double l2 = 1e-5;
+
+			NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder();
+			builder.seed(140);
+			builder.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT);
+			builder.weightInit(WeightInit.XAVIER);
+			if (l2 > 0) {
+				System.out.println("l2 = " + l2);
+				builder.setL2(l2);
+			}
+			builder.updater(new Adam(mapSchedule));
+
+			GraphBuilder graphBuilder = builder.graphBuilder().backpropType(BackpropType.Standard).addInputs("input").setOutputs("output");
+			graphBuilder = graphBuilder.addLayer("dense1", new DenseLayer.Builder().nIn(inputSize).nOut(20).updater(new Adam(mapSchedule))
+					.weightInit(WeightInit.RELU).activation(Activation.RELU).build(), "input");
+			graphBuilder = graphBuilder.addLayer("dense2",
+					new DenseLayer.Builder().nIn(20).nOut(10).updater(new Adam(mapSchedule)).weightInit(WeightInit.RELU).activation(Activation.RELU).build(),
+					"dense1");
+			graphBuilder = graphBuilder.addLayer("output", new OutputLayer.Builder(LossFunction.MSE).nIn(10).nOut(outputSize).updater(new Adam(mapSchedule))
+					.weightInit(WeightInit.XAVIER).activation(Activation.IDENTITY).build(), "dense2");
+
+			ComputationGraph = new ComputationGraph(graphBuilder.build());
+			ComputationGraph.init();
+
+			UIServer uiServer = UIServer.getInstance();
+			StatsStorage memoryStatsStorage = new InMemoryStatsStorage();
+			uiServer.attach(memoryStatsStorage);
+			int listenerFrequency = 10;
+			ComputationGraph.setListeners(new StatsListener(memoryStatsStorage, listenerFrequency), new ScoreIterationListener(listenerFrequency));
+
+			System.out.println(ComputationGraph.summary());
+		}
+	}
+
 	/**
 	 * 训练
 	 * 
@@ -40,13 +116,19 @@ public class UserItemRecommendModel extends RecommendModel {
 			List<Double> feature = new ArrayList<Double>();
 			feature.addAll(user.doubleValue());
 			feature.addAll(item.doubleValue());
-//			System.out.println(feature.size());
+			// System.out.println(feature.size());
 			features.add(feature);
 			labels.add(label.doubleValue());
 		}
 		this.fit(features, labels);
 	}
 
+	/**
+	 * 训练
+	 * 
+	 * @param features 特征值
+	 * @param labels 标签值
+	 */
 	@Override
 	public void fit(List<List<Double>> features, List<List<Double>> labels) {
 		ComputationGraph computationGraph = (ComputationGraph) this.getModel();
@@ -55,6 +137,13 @@ public class UserItemRecommendModel extends RecommendModel {
 		computationGraph.fit(trainDataSet);
 	}
 
+	/**
+	 * 将数值转为DataSet
+	 * 
+	 * @param features 特征值
+	 * @param labels 标签值
+	 * @return DataSet 数据集
+	 */
 	private DataSet getDataSet(List<List<Double>> features, List<List<Double>> labels) {
 		DataSet dataSet = null;
 		Map<String, Object> initProps = this.getInitProps();
@@ -99,9 +188,11 @@ public class UserItemRecommendModel extends RecommendModel {
 		DataSet dataSet = this.getDataSet(features, null);
 		INDArray featuresINDArray = dataSet.getFeatures();
 
-		INDArray[] outputs = computationGraph.output(featuresINDArray);
-		for (INDArray output : outputs) {
-			double value = output.getDouble(0);
+		for (int i = 0; i < featuresINDArray.rows(); i++) {
+			INDArray featureINDArray = featuresINDArray.getRow(i);
+			INDArray[] outputs = computationGraph.output(featureINDArray);
+			// System.out.println("outputs.length = " + outputs.length);
+			double value = outputs[0].getDouble(0);
 			result.add(Collections.singletonList(value));
 		}
 
@@ -128,7 +219,9 @@ public class UserItemRecommendModel extends RecommendModel {
 	@Override
 	public void evaluate(List<List<Double>> features, List<List<Double>> labels) {
 		List<List<Double>> predictedResults = this.output(features);
-		EvaluateTool.eval(predictedResults, labels);
+		System.out.println("predictedResults.size() = " + predictedResults.size());
+		Map<String, Double> evalResults = RatingEvaluator.eval(predictedResults, labels, null);
+		System.out.println("mae = " + evalResults.get("mae") + ", mse = " + evalResults.get("mse") + ", rmse = " + evalResults.get("rmse"));
 	}
 
 }

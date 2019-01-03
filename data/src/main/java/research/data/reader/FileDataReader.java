@@ -7,6 +7,12 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 文件读取器
+ * 
+ * @author liweigu714@163.com
+ *
+ */
 public class FileDataReader {
 	/**
 	 * 编码值为 "utf-8"
@@ -36,15 +42,28 @@ public class FileDataReader {
 	/**
 	 * 读本地文件
 	 * 
+	 * @param filePath 文件路径
+	 * @param start 起始索引
+	 * @param count 记录数
+	 * @return 文件内容，每行内容对应列表里一个字符串。
+	 */
+	public static List<String> readFile(String filePath, int start, int count) {
+		return readFile(new File(filePath), start, count);
+	}
+
+	/**
+	 * 读本地文件
+	 * 
 	 * @param inputFile 文件
-	 * @param start
-	 * @param count
+	 * @param start 起始索引
+	 * @param count 记录数。-1表示读取全部记录。
 	 * @return 文件内容，每行内容对应列表里一个字符串。
 	 */
 	public static List<String> readFile(File inputFile, int start, int count) {
 		ArrayList<String> lines = new ArrayList<String>();
 
 		boolean readAll = count == -1;
+		// System.out.println("readAll = " + readAll);
 
 		try {
 			InputStreamReader isr = new InputStreamReader(new FileInputStream(inputFile), Encoding);
