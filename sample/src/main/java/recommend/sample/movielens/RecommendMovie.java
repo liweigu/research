@@ -37,6 +37,7 @@ public class RecommendMovie {
 
 		int epoch = 5000; // 2500, 5000, 10000
 		int batchSize = 32;
+		System.out.println("training...");
 		for (int i = 0; i < epoch; i++) {
 			if (i % 100 == 0) {
 				System.out.println("i = " + i);
@@ -53,7 +54,7 @@ public class RecommendMovie {
 		System.out.println("evaluating...");
 		int evalCount = 100;
 		List<Rating> validRatings = UserItemReader.readRatings(userDataPath, itemDataPath, validDataPath, 0, evalCount);
-		System.out.println("validRatings.size() = " + validRatings.size());
+		// System.out.println("validRatings.size() = " + validRatings.size());
 		// 结果评估
 		userItemRecommendModel.evaluate(validRatings);
 	}

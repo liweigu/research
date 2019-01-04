@@ -21,6 +21,12 @@ public class UserItemReader {
 	public static Map<String, Map<Double, User>> CachedUsers = new HashMap<String, Map<Double, User>>();
 	public static Map<String, Map<Double, Item>> CachedItems = new HashMap<String, Map<Double, Item>>();
 
+	/**
+	 * 读取用户数据
+	 * 
+	 * @param userDataPath 用户数据路径
+	 * @return 用户数据
+	 */
 	public static Map<Double, User> readUsers(String userDataPath) {
 		Map<Double, User> users;
 		if (CachedUsers.containsKey(userDataPath)) {
@@ -59,6 +65,12 @@ public class UserItemReader {
 		return users;
 	}
 
+	/**
+	 * 读取物品数据
+	 * 
+	 * @param itemDataPath 物品数据路径
+	 * @return 物品数据
+	 */
 	public static Map<Double, Item> readItems(String itemDataPath) {
 		Map<Double, Item> items;
 
@@ -96,10 +108,28 @@ public class UserItemReader {
 		return items;
 	}
 
+	/**
+	 * 读取评分数据
+	 * 
+	 * @param userDataPath 用户数据路径
+	 * @param itemDataPath 物品数据路径
+	 * @param ratingDataPath 评分数据路径
+	 * @return 评分数据
+	 */
 	public static List<Rating> readRatings(String userDataPath, String itemDataPath, String ratingDataPath) {
 		return readRatings(userDataPath, itemDataPath, ratingDataPath, 0, -1);
 	}
 
+	/**
+	 * 读取评分数据
+	 * 
+	 * @param userDataPath 用户数据路径
+	 * @param itemDataPath 物品数据路径
+	 * @param ratingDataPath 评分数据路径
+	 * @param start 起始索引
+	 * @param size 记录数
+	 * @return 评分数据
+	 */
 	public static List<Rating> readRatings(String userDataPath, String itemDataPath, String ratingDataPath, int start, int size) {
 		List<Rating> ratings = new ArrayList<Rating>();
 

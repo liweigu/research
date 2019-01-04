@@ -12,6 +12,14 @@ import java.util.Map;
  *
  */
 public class RatingEvaluator {
+	/**
+	 * 评估结果
+	 * 
+	 * @param predictedResults 预测结果
+	 * @param labels 标签
+	 * @param evalTypes 评估类型。null值表示使用全部评估类型。
+	 * @return 评估结果
+	 */
 	public static Map<String, Double> eval(List<List<Double>> predictedResults, List<List<Double>> labels, List<String> evalTypes) {
 		List<Double> predictedValues = new ArrayList<Double>();
 		for (List<Double> predictedResult : predictedResults) {

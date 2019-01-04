@@ -44,8 +44,13 @@ import research.model.eval.RatingEvaluator;
  */
 public class UserItemRecommendModel extends RecommendModel {
 
+	/**
+	 * 初始化模型
+	 * 
+	 * @param initProps 初始化参数
+	 */
 	public void initModel(Map<String, Object> initProps) {
-		if (ComputationGraph == null) {
+		if (Model == null) {
 			int inputSize;
 			if (initProps != null && initProps.containsKey("inputSize")) {
 				inputSize = (int) initProps.get("inputSize");
@@ -87,16 +92,18 @@ public class UserItemRecommendModel extends RecommendModel {
 			graphBuilder = graphBuilder.addLayer("output", new OutputLayer.Builder(LossFunction.MSE).nIn(10).nOut(outputSize).updater(new Adam(mapSchedule))
 					.weightInit(WeightInit.XAVIER).activation(Activation.IDENTITY).build(), "dense2");
 
-			ComputationGraph = new ComputationGraph(graphBuilder.build());
-			ComputationGraph.init();
+			ComputationGraph computationGraph = new ComputationGraph(graphBuilder.build());
+			computationGraph.init();
 
 			UIServer uiServer = UIServer.getInstance();
 			StatsStorage memoryStatsStorage = new InMemoryStatsStorage();
 			uiServer.attach(memoryStatsStorage);
 			int listenerFrequency = 10;
-			ComputationGraph.setListeners(new StatsListener(memoryStatsStorage, listenerFrequency), new ScoreIterationListener(listenerFrequency));
+			computationGraph.setListeners(new StatsListener(memoryStatsStorage, listenerFrequency), new ScoreIterationListener(listenerFrequency));
 
-			System.out.println(ComputationGraph.summary());
+			System.out.println(computationGraph.summary());
+
+			Model = computationGraph;
 		}
 	}
 
@@ -174,11 +181,21 @@ public class UserItemRecommendModel extends RecommendModel {
 		return dataSet;
 	}
 
+	/**
+	 * 训练
+	 * 
+	 * @param dataFrame 数据框架
+	 */
 	@Override
 	public void fit(DataFrame dataFrame) {
 		throw new UnsupportedOperationException();
 	}
 
+	/**
+	 * 预测
+	 * 
+	 * @param features 特征值
+	 */
 	@Override
 	public List<List<Double>> output(List<List<Double>> features) {
 		List<List<Double>> result = new ArrayList<List<Double>>();
@@ -199,6 +216,11 @@ public class UserItemRecommendModel extends RecommendModel {
 		return result;
 	}
 
+	/**
+	 * 结果评估
+	 * 
+	 * @param ratings 评分列表
+	 */
 	public void evaluate(List<Rating> ratings) {
 		List<List<Double>> features = new ArrayList<List<Double>>();
 		List<List<Double>> labels = new ArrayList<List<Double>>();
@@ -216,10 +238,16 @@ public class UserItemRecommendModel extends RecommendModel {
 		this.evaluate(features, labels);
 	}
 
+	/**
+	 * 结果评估
+	 * 
+	 * @param features 特征值
+	 * @param labels 标签值
+	 */
 	@Override
 	public void evaluate(List<List<Double>> features, List<List<Double>> labels) {
 		List<List<Double>> predictedResults = this.output(features);
-		System.out.println("predictedResults.size() = " + predictedResults.size());
+		// System.out.println("predictedResults.size() = " + predictedResults.size());
 		Map<String, Double> evalResults = RatingEvaluator.eval(predictedResults, labels, null);
 		System.out.println("mae = " + evalResults.get("mae") + ", mse = " + evalResults.get("mse") + ", rmse = " + evalResults.get("rmse"));
 	}

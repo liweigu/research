@@ -13,10 +13,20 @@ public class Label extends BaseVo {
 
 	private List<Double> values;
 
+	/**
+	 * 构造函数
+	 * 
+	 * @param values 数值
+	 */
 	public Label(List<Double> values) {
 		this.values = values;
 	}
 
+	/**
+	 * 返回数值
+	 * 
+	 * @return 数值
+	 */
 	@Override
 	public List<Double> doubleValue() {
 		return values;
