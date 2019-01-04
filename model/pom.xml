@@ -17,6 +17,10 @@
 				<updatePolicy>daily</updatePolicy>
 			</snapshots>
 		</repository>
+		<repository>
+			<id>custom</id>
+			<url>http://maven.liweigu.top:8081/repository/maven-releases/</url>
+		</repository>
 	</repositories>
 
 	<build>
@@ -34,9 +38,9 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<nd4j.backend>nd4j-native</nd4j.backend>
-		<dl4j.version>1.0.0-SNAPSHOT</dl4j.version>
+		<dl4j.version>1.0.0-beta3</dl4j.version><!-- 1.0.0-SNAPSHOT -->
 		<mkl.version>2019.1</mkl.version>
-		<javacpp-presets.version>1.4.4-SNAPSHOT</javacpp-presets.version><!-- 1.4.3-SNAPSHOT -->
+		<javacpp-presets.version>1.4.4-SNAPSHOT</javacpp-presets.version>
 	</properties>
 
 	<dependencies>
@@ -77,5 +81,12 @@
 			<version>${dl4j.version}</version>
 		</dependency>
 		<!-- dl4j end -->
+		<!-- LibRec start -->
+		<dependency>
+			<groupId>net.librec</groupId>
+			<artifactId>librec-core</artifactId>
+			<version>2.0.0-beta</version>
+		</dependency>
+		<!-- LibRec end -->
 	</dependencies>
 </project>
