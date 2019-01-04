@@ -48,6 +48,24 @@ public class UserItemRecommendModel extends RecommendModel {
 	 * 初始化模型
 	 * 
 	 * @param initProps 初始化参数
+	 * @param pretrainedModelPath 预训练模型路径
+	 */
+	public void initModel(Map<String, Object> initProps, String pretrainedModelPath) {
+		if (pretrainedModelPath == null || pretrainedModelPath.length() == 0) {
+			throw new IllegalArgumentException("pretrainedModelPath为空");
+		}
+		if (initProps == null || !initProps.containsKey("inputSize")) {
+			throw new IllegalArgumentException("initProps缺少属性：inputSize");
+		}
+		InitProps = initProps;
+
+		this.restore(pretrainedModelPath);
+	}
+
+	/**
+	 * 初始化模型
+	 * 
+	 * @param initProps 初始化参数
 	 */
 	public void initModel(Map<String, Object> initProps) {
 		if (Model == null) {

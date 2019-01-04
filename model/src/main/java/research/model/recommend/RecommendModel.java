@@ -2,9 +2,12 @@ package research.model.recommend;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.deeplearning4j.nn.graph.ComputationGraph;
 import org.deeplearning4j.util.ModelSerializer;
 import org.slf4j.Logger;
@@ -81,26 +84,43 @@ public abstract class RecommendModel implements RecommendModelI {
 	 * 
 	 * @param path 模型路径
 	 */
-	public boolean restore(String path) {
+	protected boolean restore(String path) {
 		boolean flag = false;
 
 		if (Model == null) {
 			if (path != null && path.length() > 0) {
-				if (path.startsWith("http://")) {
-					// TODO: 下载预训练模型
-					throw new UnsupportedOperationException();
-				} else {
-					File modelFile = new File(path);
-					if (modelFile.exists()) {
-						// TODO: 识别并加载不同类型的模型
-						try {
-							Model = ModelSerializer.restoreComputationGraph(modelFile, true);
-							flag = true;
-						} catch (IOException e) {
-							Log.info("加载模型失败", e);
+				File modelFile = null;
+				if (path.startsWith("http")) {
+					String tmpdir = System.getProperty("java.io.tmpdir");
+					String localFilename = new File(path).getName();
+					File cachedFile = new File(tmpdir, localFilename);
+					try {
+						if (!cachedFile.exists()) {
+							// 下载预训练模型
+							Log.info("下载模型(" + path + ")到： " + cachedFile.toString());
+							FileUtils.copyURLToFile(new URL(path), cachedFile);
+						} else {
+							// 模型已下载
+							Log.info("使用已下载的模型： " + cachedFile.toString());
 						}
-					} else {
+						modelFile = cachedFile;
+					} catch (Exception e) {
+						Log.info("下载模型文件失败", e);
+					}
+				} else {
+					modelFile = new File(path);
+					if (!modelFile.exists()) {
 						Log.info("加载模型失败，模型文件不存在：path = " + path);
+						modelFile = null;
+					}
+				}
+				if (modelFile != null) {
+					// TODO: 识别并加载不同类型的模型
+					try {
+						Model = ModelSerializer.restoreComputationGraph(modelFile, true);
+						flag = true;
+					} catch (IOException e) {
+						Log.info("加载模型失败", e);
 					}
 				}
 			} else {

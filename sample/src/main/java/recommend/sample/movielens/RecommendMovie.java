@@ -33,20 +33,32 @@ public class RecommendMovie {
 		UserItemRecommendModel userItemRecommendModel = new UserItemRecommendModel();
 		Map<String, Object> initProps = new HashMap<String, Object>();
 		initProps.put("inputSize", 23);
-		userItemRecommendModel.initModel(initProps);
+		boolean usePretrainedModel = true;
+		String modelName = "movie.model";
+		if (usePretrainedModel) {
+			// 本地路径
+			String pretrainedModelPath = basePath + modelName;
+			// 远程路径
+			pretrainedModelPath = "http://model.liweigu.top/model/movie.model";
+			userItemRecommendModel.initModel(initProps, pretrainedModelPath);
+		} else {
+			userItemRecommendModel.initModel(initProps);
 
-		int epoch = 5000; // 2500, 5000, 10000
-		int batchSize = 32;
-		System.out.println("training...");
-		for (int i = 0; i < epoch; i++) {
-			if (i % 100 == 0) {
-				System.out.println("i = " + i);
+			int epoch = 10000; // 2500, 5000, 10000
+			int batchSize = 32;
+			System.out.println("training...");
+			for (int i = 0; i < epoch; i++) {
+				if (i % 100 == 0) {
+					System.out.println("i = " + i);
+				}
+				int start = batchSize * i;
+				// 分批读取训练数据
+				List<Rating> ratings = UserItemReader.readRatings(userDataPath, itemDataPath, trainDataPath, start,
+						batchSize);
+				userItemRecommendModel.fit(ratings);
 			}
-			int start = batchSize * i;
-			// 分批读取训练数据
-			List<Rating> ratings = UserItemReader.readRatings(userDataPath, itemDataPath, trainDataPath, start,
-					batchSize);
-			userItemRecommendModel.fit(ratings);
+			System.out.println("saving...");
+			userItemRecommendModel.save(basePath + modelName);
 		}
 
 		// 验证与评估
